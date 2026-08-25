@@ -1,0 +1,17 @@
+name: dhm-design-system-build
+description: |
+  Build or update component libraries from Figma using a versioned DHM token npm package,
+  Storybook, Figma Code Connect, and Chromatic. Token values are consumed from npm rather
+  than copied from Figma into a second local token source.
+triggers:
+  - figma component
+  - design system
+  - storybook component
+  - chromatic
+  - code connect
+  - new component
+  - design system build
+  - ds pipeline
+  - figma to chromatic
+  - figma to storybook
+  - bootstrap design system

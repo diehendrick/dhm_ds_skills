@@ -1,0 +1,4 @@
+.button {
+  background: var(--color-action-primary-background);
+  border-radius: var(--shape-radius-md);
+}

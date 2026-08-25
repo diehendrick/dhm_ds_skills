@@ -1,0 +1,4 @@
+interface:
+  display_name: DHM Design System Build
+  short_description: Build token-aligned React components from Figma
+  default_prompt: Implement or review this Figma component using the installed DHM token package, Storybook, and Code Connect.

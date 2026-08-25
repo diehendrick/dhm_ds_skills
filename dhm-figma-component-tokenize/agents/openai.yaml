@@ -1,0 +1,4 @@
+interface:
+  display_name: DHM Figma Component Tokenize
+  short_description: Bind Figma components to DHM design tokens
+  default_prompt: Create or correct this Figma component using DHM Variables, Effect Styles, and Text Styles.

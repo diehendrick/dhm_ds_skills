@@ -1,0 +1,11 @@
+name: dhm-figma-component-tokenize
+description: |
+  Bind Figma component styling to DHM semantic Variables, Effect Styles, and Text Style
+  compositions before code implementation. Use for Figma component creation or token-binding repair.
+triggers:
+  - figma component binding
+  - bind figma tokens
+  - figma variables
+  - figma text styles
+  - create figma component
+  - tokenized figma component

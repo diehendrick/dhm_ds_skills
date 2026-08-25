@@ -1,0 +1,7 @@
+{
+  "modes": ["Default", "Dark"],
+  "entries": [
+    { "tokenPath": "color/action/primary/background", "cssVariable": "--color-action-primary-background" },
+    { "tokenPath": "shape/radius/md", "cssVariable": "--shape-radius-md" }
+  ]
+}
