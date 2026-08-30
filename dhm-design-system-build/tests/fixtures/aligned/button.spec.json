@@ -1,0 +1,19 @@
+{
+  "name": "Button",
+  "default": {
+    "elements": {
+      "root": {
+        "styles": {
+          "backgroundColor": {
+            "$token": "color.action.primary.background",
+            "$type": "color"
+          },
+          "cornerRadius": {
+            "$token": "shape.radius.md",
+            "$type": "dimension"
+          }
+        }
+      }
+    }
+  }
+}

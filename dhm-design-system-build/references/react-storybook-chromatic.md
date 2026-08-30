@@ -49,6 +49,10 @@ Record at least this information per component:
     "version": "1.1.1",
     "sourceCommit": "abc1234"
   },
+  "componentSpec": {
+    "path": "components/button.json",
+    "profile": "token-bound"
+  },
   "roles": [
     { "element": "root", "role": "background.default", "tokenPath": "color/action/primary/background", "cssVariable": "--color-action-primary-background" },
     { "element": "root", "role": "radius", "tokenPath": "shape/radius/md", "cssVariable": "--shape-radius-md" }
@@ -60,4 +64,4 @@ Record at least this information per component:
 }
 ```
 
-The values must match `package-lock.json`, the public package manifest, the rendered source, and the Code Connect URL. The manifest's `entries` array is authoritative for `tokenPath` and `cssVariable`. Light/dark color modes do not require typography variants. Record extra typography-mode behavior only when responsive or typography-specific modes are intentionally defined.
+The values must match `package-lock.json`, the public package manifest, the exported Component Spec, the rendered source, and the Code Connect URL. `componentSpec.profile` is `token-bound` for a Pro export and `resolved` for a Free export. The manifest's `entries` array is authoritative for `tokenPath` and `cssVariable`. `roles` is optional when the Component Spec provides bindings; use it only for implementation-specific aliases or exceptions, and never repeat bindings just to recreate the spec. Light/dark color modes do not require typography variants. Record extra typography-mode behavior only when responsive or typography-specific modes are intentionally defined.

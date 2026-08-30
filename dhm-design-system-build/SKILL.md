@@ -13,7 +13,7 @@ Keep the responsibilities separate:
 
 ```text
 DHM plugin workspace -> GitHub token repository -> versioned token npm package
-Figma component -> component API and visual intent
+Figma component -> exported DHM Component Spec -> component API and visual intent
 Component-library repository -> React implementation, Storybook, Code Connect, Chromatic
 ```
 
@@ -27,6 +27,7 @@ Before creating or changing a component, identify:
 
 - token package name and exact published version;
 - Figma component URL and node ID;
+- exported DHM Component Spec file and whether it is `token-bound` (Pro) or `resolved` (Free);
 - component-library framework and styling adapter;
 - target component name and intended public API;
 - whether the release should publish Code Connect and/or Chromatic.
@@ -46,25 +47,27 @@ import '@scope/tokens/typography.css';
 
 Replace `@scope/tokens` with the actual package name. Use the package's documented CSS custom-property names and typography utilities exactly; do not invent aliases.
 
-Read the public `manifest.json` export and package README when mapping CSS. Record the token package name, resolved version, Figma URL, node ID, source commit, typography mapping, and every visual role-to-token mapping in `design-system/component-contract.json`.
+Read the public `manifest.json` export and package README when mapping CSS. Record the token package name, resolved version, Figma URL, node ID, source commit, Component Spec path/profile, typography mapping, and implementation-specific role notes in `design-system/component-contract.json`. Do not manually duplicate token bindings already present in the Component Spec.
 
 Read [references/react-storybook-chromatic.md](references/react-storybook-chromatic.md) before bootstrapping or modifying a React + CSS Modules project.
 
 ## 2. Inspect and map the Figma component
 
-Use Figma MCP tools to inspect the selected component and, when possible, capture a screenshot.
+Read the exported Component Spec before inspecting the selected Figma component. Use Figma MCP tools to verify the selected component and, when possible, capture a screenshot.
 
 Extract:
 
 - component set name, Figma URL, and node ID;
 - variant, boolean, text, instance-swap, and numeric properties;
 - default values and component states;
-- semantic styling roles for color, spacing, sizing, radius, typography, elevation, and motion;
+- semantic styling roles for color, spacing, radius, typography, elevation, and motion;
 - accessibility requirements implicit in the component.
 
 Map Figma properties to an explicit, typed public React API. Do not expose a React prop merely because it exists internally, and do not fabricate Figma property mappings for Code Connect.
 
-Map every visual styling role to a token declared by the installed package. Prefer semantic tokens; use a primitive only where the package has no semantic equivalent and record why. If a necessary semantic token does not exist, stop and report the missing token; do not add a hard-coded replacement.
+For a token-bound Component Spec, map every token-bound visual role to a token declared by the installed package. Prefer semantic tokens; use a primitive only where the package has no semantic equivalent and record why. For a resolved Component Spec, use final values only as visual evidence and validate the implementation against the installed package manifest without inventing a binding that the spec does not provide. If a necessary semantic token does not exist, stop and report the missing token; do not add a hard-coded replacement.
+
+Do not manufacture width or height token mappings from the Component Spec. Its width and height values may be Hug/Auto layout output, text auto-height, wrapper geometry, or vector bounds. Implement that geometry with the appropriate layout behavior. Only use an explicit size token when the Component Spec or supplied design-system contract identifies it as a reusable design decision.
 
 Typography compositions normally remain invariant across light/dark modes. Do not require a theme-specific text style merely because color tokens have modes. Only when the workspace explicitly defines responsive or typography-specific modes must the component contract record how those compositions are selected and verified.
 

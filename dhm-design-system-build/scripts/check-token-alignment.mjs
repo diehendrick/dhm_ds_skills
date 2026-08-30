@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 
 const [typographyCssPath, manifestPath, sourceDirectory, contractPath] = process.argv.slice(2);
 if (!typographyCssPath || !manifestPath || !sourceDirectory || !contractPath) {
@@ -31,6 +31,44 @@ const source = filesIn(sourceDirectory)
   .map(path => ({ path, text: readFileSync(path, 'utf8') }));
 const contract = JSON.parse(readFileSync(contractPath, 'utf8'));
 const problems = [];
+let componentSpecTokenPaths = new Set();
+
+if (contract.componentSpec) {
+  const profile = contract.componentSpec.profile;
+  if (!['token-bound', 'resolved'].includes(profile)) problems.push('Component Spec profile must be "token-bound" or "resolved"');
+  if (typeof contract.componentSpec.path !== 'string' || !contract.componentSpec.path.trim()) {
+    problems.push('Component Spec path is required when componentSpec metadata is present');
+  } else {
+    const componentSpecPath = resolve(dirname(contractPath), contract.componentSpec.path);
+    if (!existsSync(componentSpecPath)) problems.push(`Component Spec file does not exist: ${contract.componentSpec.path}`);
+    else {
+      try {
+        const componentSpec = JSON.parse(readFileSync(componentSpecPath, 'utf8'));
+        if (!componentSpec || typeof componentSpec !== 'object' || !componentSpec.default) problems.push(`Component Spec is not a valid component payload: ${contract.componentSpec.path}`);
+        else if (profile === 'token-bound') componentSpecTokenPaths = tokenPathsIn(componentSpec);
+      } catch {
+        problems.push(`Component Spec is not valid JSON: ${contract.componentSpec.path}`);
+      }
+    }
+  }
+}
+
+function tokenPathsIn(value, paths = new Set()) {
+  if (Array.isArray(value)) value.forEach(item => tokenPathsIn(item, paths));
+  else if (value && typeof value === 'object') {
+    if (typeof value.$token === 'string') paths.add(normalizeTokenPath(value.$token));
+    Object.values(value).forEach(item => tokenPathsIn(item, paths));
+  }
+  return paths;
+}
+
+function normalizeTokenPath(tokenPath) {
+  return tokenPath.replace(/\./g, '/');
+}
+
+for (const tokenPath of componentSpecTokenPaths) {
+  if (!tokensByPath.has(tokenPath)) problems.push(`Component Spec references token missing from manifest: ${tokenPath}`);
+}
 
 for (const file of source.filter(entry => /\.(?:css|scss)$/i.test(entry.path))) {
   for (const property of file.text.matchAll(/\b(font(?:-family|-weight|-size)?|line-height|letter-spacing)\s*:/g)) {
@@ -50,6 +88,7 @@ for (const mapping of contract.roles ?? []) {
   const entry = tokensByVariable.get(mapping.cssVariable);
   if (!entry) problems.push(`Role ${mapping.role} references unavailable CSS variable: ${mapping.cssVariable}`);
   else if (mapping.tokenPath !== entry.tokenPath || !tokensByPath.has(mapping.tokenPath)) problems.push(`Role ${mapping.role} does not match manifest token path: ${mapping.tokenPath}`);
+  else if (componentSpecTokenPaths.size && !componentSpecTokenPaths.has(normalizeTokenPath(mapping.tokenPath))) problems.push(`Role ${mapping.role} is not declared by the token-bound Component Spec: ${mapping.tokenPath}`);
   else if (!source.some(file => file.text.includes(`var(${mapping.cssVariable})`))) problems.push(`Role ${mapping.role} maps ${mapping.cssVariable} but it is not used in source`);
 }
 

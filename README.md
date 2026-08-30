@@ -12,7 +12,8 @@ Reusable agent skills for DHM Tokens design systems.
 1. Author and bind tokens, text styles, and components in DHM Tokens/Figma.
 2. Publish a versioned DHM token package.
 3. Use the Figma skill to ensure the component has no detached visual values.
-4. Use the build skill to implement it from the same package and verify it in Storybook.
+4. Export the Component Spec: Pro exports retain token bindings; Free exports contain resolved final values.
+5. Use the build skill to implement it from the same package and verify it in Storybook.
 
 The skills use normal automatic discovery. In Codex, install or expose this repository in the skill search path; the agent then selects the relevant skill from the request. Other agent products need an equivalent installation or workspace-loading step—agent skills are not shared automatically across separate applications.
 
@@ -20,7 +21,7 @@ The skills use normal automatic discovery. In Codex, install or expose this repo
 
 The token package must expose `tokens.css`, `typography.css`, and `manifest.json`. `manifest.json` must have an `entries` array containing `tokenPath` and `cssVariable`; this enables role-to-token validation.
 
-Text compositions normally stay invariant across light/dark modes; color modes do not require typography variants. If users deliberately create responsive or typography-specific modes, document their selector and verification in the component contract.
+Text compositions normally stay invariant across light/dark modes; color modes do not require typography variants. If users deliberately create responsive or typography-specific modes, document their selector and verification in the component contract. Component Specs are the handoff source for structure, variants, token bindings, and resolved geometry. Width and height are not inferred as token bindings: only treat them as tokens when the design system explicitly defines a reusable component size.
 
 ## Validation
 

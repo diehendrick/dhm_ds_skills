@@ -1,5 +1,9 @@
 {
   "component": "Button",
+  "componentSpec": {
+    "path": "button.spec.json",
+    "profile": "token-bound"
+  },
   "typography": [
     { "element": "label", "className": "dhm-type-body-default" }
   ],
