@@ -146,3 +146,27 @@ Use Chromatic changes as a review gate according to the team's policy. `exitZero
 ## Completion report
 
 Report the token package/version, Figma component URL, created or changed component files, validation results, Chromatic/Code Connect status, and any unresolved token or visual mismatch.
+
+## Component completeness gate
+
+Accept exactly one structural source for a component: a Component Spec from the installed package, a selected JSON file under the project `component_specs/` folder, or a Figma URL/node that is scanned once and then cached as a Component Spec. A Figma URL is optional visual-review evidence when a saved spec is already available.
+
+Before implementation, inspect `typography.css`, `manifest.json`, and `design-system/assets-contract.json` when present. Reuse recorded font and icon dependencies. If a required font source, family/weight, icon provider, collection, or custom asset is missing, show the exact proposed dependency or asset path and wait for approval before adding it.
+
+Create a visual and behavioral coverage matrix before coding. It must cover every applicable border/stroke color and width, typography, icon slot, elevation, variant, size, state, and interaction in the Component Spec. Fields, inputs, outlined controls, and visibly bounded elements require explicit border-width and border-color mappings. An absent boundary must be recorded as `none` with a reason. If the Component Spec omits an applicable visual property, verify it from Figma when available or stop for clarification; never guess or silently omit it.
+
+Map only meaningful Figma properties to the public API. Explicitly cover supported default, hover, focus-visible, pressed, disabled, error, selected, and other specified states. A preview-only interaction selector must not replace native keyboard, focus, disabled, active, or validation behavior.
+
+Every component needs Storybook Autodocs and a Docs page, a concise description, Args/Controls, and one story per covered state. A Canvas-only story is incomplete.
+
+Choose Storybook controls by option count: radio for exactly two compact mutually exclusive options; `select` for three or more; boolean for true/false; and text for free text. Preview-only interaction state must be labelled as such and must not become a production prop.
+
+Record per-component implementation metadata in `design-system/component-contracts/<component>.contract.json`. Its coverage must record boundary decisions, state-to-story mappings, and `docs.autodocs: true`; controls must declare their option list and chosen control. A small index may list contracts, but do not use one large aggregate component contract.
+
+## Source resolution for short requests
+
+A short request such as "Create a Button component" starts a narrow component-spec lookup. First honor an explicit source in the request: a Figma URL/node, `component_specs/<name>.json`, an installed package name, or `node_modules/<package>/components/<name>.json`. For an installed package, read only its declared component-spec registry (`components/index.json` or the package export) and then the exact matching file; never recursively scan all of `node_modules`.
+
+When the request has no source, look for an exact component name in the project-local `component_specs/` directory, then in the project's declared token-package dependency and its Component Specs registry. A configured Figma URL/node may be used as a fallback only when no saved spec is found. Do not merge candidates from different sources. If several sources provide a different exact match, present the candidates and ask the user to choose; if none exists, ask for a source.
+
+A Component Spec-only workflow cannot use Figma to fill an omitted border. Inspect the spec, package manifest, typography, and any explicit component contract. If those artifacts do not explicitly establish whether a boundary is token-bound or intentionally absent, stop for clarification. Do not infer a border from the component name or invent a value.

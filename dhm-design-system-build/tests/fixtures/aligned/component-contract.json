@@ -10,5 +10,18 @@
   "roles": [
     { "element": "root", "role": "background.default", "tokenPath": "color/action/primary/background", "cssVariable": "--color-action-primary-background" },
     { "element": "root", "role": "radius", "tokenPath": "shape/radius/md", "cssVariable": "--shape-radius-md" }
+  ],
+  "coverage": {
+    "boundaries": [
+      { "element": "root", "status": "none", "reason": "The fixture Button has no visible boundary." }
+    ],
+    "states": [
+      { "name": "default", "story": "Default" }
+    ],
+    "docs": { "autodocs": true }
+  },
+  "controls": [
+    { "prop": "variant", "options": ["filled", "outlined"], "control": "radio" },
+    { "prop": "interaction", "options": ["default", "hover", "pressed", "disabled"], "control": "select" }
   ]
 }

@@ -33,6 +33,30 @@ const contract = JSON.parse(readFileSync(contractPath, 'utf8'));
 const problems = [];
 let componentSpecTokenPaths = new Set();
 
+const coverage = contract.coverage;
+if (!coverage || typeof coverage !== 'object') {
+  problems.push('Component contract requires coverage for boundaries, states, and docs');
+} else {
+  const boundaries = Array.isArray(coverage.boundaries) ? coverage.boundaries : [];
+  if (!boundaries.length) problems.push('Component contract requires a boundary decision or explicit not-applicable entry');
+  for (const boundary of boundaries) {
+    if (!boundary || !['token-bound', 'none', 'not-applicable'].includes(boundary.status)) problems.push('Each boundary requires a valid status');
+    else if (boundary.status === 'token-bound' && (!boundary.widthRole || !boundary.colorRole)) problems.push(`Token-bound boundary ${boundary.element || 'element'} requires widthRole and colorRole`);
+    else if (boundary.status === 'none' && typeof boundary.reason !== 'string') problems.push(`Boundary ${boundary.element || 'element'} with status none requires a reason`);
+  }
+  const states = Array.isArray(coverage.states) ? coverage.states : [];
+  if (!states.length) problems.push('Component contract requires explicit state/story coverage');
+  for (const state of states) {
+    if (!state || typeof state.name !== 'string' || typeof state.story !== 'string') problems.push('Each covered state requires name and story');
+    else if (!source.some(file => /\.stories\.[cm]?[jt]sx?$/i.test(file.path) && new RegExp(`export\\s+(?:const|let|var)\\s+${state.story}\\b`).test(file.text))) problems.push(`Missing Storybook export for covered state: ${state.story}`);
+  }
+  if (coverage.docs?.autodocs !== true) problems.push('Component contract requires coverage.docs.autodocs: true');
+  else if (!source.some(file => /\.stories\.[cm]?[jt]sx?$/i.test(file.path) && /autodocs/.test(file.text))) problems.push('No Storybook story enables Autodocs');
+}
+for (const control of contract.controls ?? []) {
+  const options = Array.isArray(control.options) ? control.options : [];
+  if (options.length > 2 && control.control === 'radio') problems.push(`Control ${control.prop || 'unknown'} has ${options.length} options and must use select instead of radio`);
+}
 if (contract.componentSpec) {
   const profile = contract.componentSpec.profile;
   if (!['token-bound', 'resolved'].includes(profile)) problems.push('Component Spec profile must be "token-bound" or "resolved"');
