@@ -6,6 +6,7 @@ Reusable agent skills for DHM Tokens design systems.
 
 - `dhm-figma-component-tokenize`: creates or corrects Figma components using DHM semantic Variables, Effect Styles, and Text Style compositions.
 - `dhm-design-system-build`: implements or reviews React components using the released DHM token npm package, Storybook, Figma Code Connect, and Chromatic.
+- `dhm-page-specs-to-react`: implements responsive React landing pages from Page Specs, token bindings, optional Component Specs, and exported assets. It supports page-only work without requiring Storybook.
 
 ## Intended workflow
 
@@ -13,7 +14,7 @@ Reusable agent skills for DHM Tokens design systems.
 2. Publish a versioned DHM token package.
 3. Use the Figma skill to ensure the component has no detached visual values.
 4. Export the Component Spec: Pro exports retain token bindings; Free exports contain resolved final values.
-5. Use the build skill to implement it from the same package and verify it in Storybook.
+5. Use the build skill to implement reusable components from the same package and verify them in Storybook, or use the Page Specs skill to implement a responsive page directly when a component library is unnecessary.
 
 The skills use normal automatic discovery. In Codex, install or expose this repository in the skill search path; the agent then selects the relevant skill from the request. Other agent products need an equivalent installation or workspace-loading step—agent skills are not shared automatically across separate applications.
 
