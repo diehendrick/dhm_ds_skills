@@ -34,6 +34,8 @@ Use sources in this order for each decision:
 
 When a Page Spec has a token binding, use its token name rather than hard-coding the resolved value. A resolved value is a useful fallback or visual-verification reference, not a replacement for an available binding. If no native Figma binding exists, retain the literal only when the Page Spec supplies it; do not invent a token alias.
 
+Read [the code-quality contract](references/code-quality.md) before implementing or reviewing a page. Its requirements apply to every implementation mode, including `page-only`.
+
 ## Select an implementation mode
 
 Choose the smallest mode that serves the request:
@@ -79,9 +81,9 @@ When a mobile or tablet Page Spec exists, it overrides inference for its matchin
 1. Inspect the target project before changing architecture or adding dependencies.
 2. Map Page Spec sections to the route and select the implementation mode.
 3. Add or update page sections, inferred local components, and assets using project conventions.
-4. Apply bound token names through the project’s token interface. Keep spacing, typography, colors, radii, borders, and effects aligned with available bindings.
+4. Apply bound token names through the project’s token interface. Keep spacing, typography, colors, radii, borders, and effects aligned with available bindings. Follow the no-inline-style and radius rules in the code-quality contract without exceptions.
 5. Check desktop and narrow viewport behavior, including long headings, cards, navigation, images, focus states, and no horizontal overflow.
-6. Run the project’s relevant typecheck, lint, test, and build commands. Do not claim visual parity without a comparison against the supplied Page Spec or Figma source.
+6. Run the project’s relevant typecheck, lint, test, and build commands. Run the contract checks for inline styles, raw radii, and changed-file readability. Do not claim visual parity without a comparison against the supplied Page Spec or Figma source.
 
 Finish with a concise implementation handoff that lists:
 
@@ -90,7 +92,7 @@ Finish with a concise implementation handoff that lists:
 - assets used, missing assets, and any authorized fallbacks;
 - inferred project-local components and inferred interaction states;
 - responsive inferences; and
-- verification commands and outcomes.
+- verification commands and outcomes, including the inline-style and radius checks.
 
 ## Boundaries
 
