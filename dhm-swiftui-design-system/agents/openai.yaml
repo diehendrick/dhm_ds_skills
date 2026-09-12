@@ -1,0 +1,3 @@
+interface:
+  display_name: "DHM SwiftUI Design System"
+  short_description: "Build SwiftUI with DHM token packages"
